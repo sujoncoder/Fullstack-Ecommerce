@@ -1,0 +1,1 @@
+export const defaultImagePath = "/public/images/users/default.png";
