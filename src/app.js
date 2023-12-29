@@ -46,11 +46,11 @@ app.get('/test', (req, res) => {
 
 // client error handler
 app.use((req, res, next) => {
-    // res.status(404).send({
-    //     success: false,
-    //     message: "route not found"
-    // });
-    next(createError(404, "route not found"));
+    res.status(404).send({
+        success: false,
+        message: "route not found"
+    });
+    // next(createError(404, "route not found"));
 });
 
 // server site error handler all server error
