@@ -4,7 +4,11 @@ import User from "../models/userModel.js";
 import createError from "http-errors";
 import deleteImage from "../helper/deleteImage.js";
 import { createJSONWebToken } from "../helpers/jsonwebtoken.js";
-import { jwtActivationKey } from "../secret/secret.js";
+import { clientUrl, jwtActivationKey } from "../secret/secret.js";
+import emailWithNodeMailer from "../helpers/email.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 
 // get all user
@@ -123,22 +127,29 @@ export const processRegister = async (req, res, next) => {
             return res.status(409).send("user with this email already exist, please sign in")
         };
 
+        // create jwt
         const token = createJSONWebToken({ name, email, phone, password, address }, jwtActivationKey, "10m");
 
-        // const id = req.params.id;
-        // const user = await User.findByIdAndDelete(id, { isAdmin: false });
-        // console.log(user)
+        // prepare email
+        const emailData = {
+            email,
+            subject: "Account Activation Email",
+            html: `
+            <h2>Hello ${name}!</h2>
+            <p>Please click here to <a href="${clientUrl}/api/v1/users/activate/${token}" target="_blank"> activate your account </a> </p>
+            `
+        };
 
-        // if (!user) {
-        //     return res.status(400).send("user does not exist with this id")
-        // };
-
-        // const userImagePath = user.image;
-        // deleteImage(userImagePath);
+        // send email with nodemailer
+        try {
+            emailWithNodeMailer(emailData);
+        } catch (error) {
+            return res.status(400).send("failed to send verifiation email")
+        };
 
         return successResponse(res, {
             statusCode: 200,
-            message: "user was createed successfully",
+            message: `send ${emailData.email} verifycation link on your email`,
             payload: {
                 token
             }
@@ -150,5 +161,42 @@ export const processRegister = async (req, res, next) => {
             return;
         };
         next(error);
+    }
+};
+
+
+// activate user account
+export const activateUserAccount = async (req, res, next) => {
+    try {
+        const token = req.body.token;
+
+        if (!token) {
+            return res.status(404).send("token not found")
+        };
+
+        const decoded = jwt.verify(token, jwtActivationKey);
+        const userExist = await User.exists({ email: decoded.email });
+
+        if (userExist) {
+            return res.status(409).send("user with this email already exist, please sign in")
+        };
+
+
+        if (!decoded) {
+            return res.status(404).send("user was not verify")
+        };
+
+        const user = await User.create(decoded);
+
+        return successResponse(res, {
+            statusCode: 201,
+            message: "user was registerd successfull",
+            payload: {
+                user
+            }
+        });
+
+    } catch (error) {
+        next(error)
     }
 };
