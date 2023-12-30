@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 import { successResponse } from "../middlewares/responseHandler.js";
 import User from "../models/userModel.js";
 import createError from "http-errors";
-import deleteImage from "../helper/deleteImage.js";
+import deleteImage from "../helpers/deleteImage.js";
 import { createJSONWebToken } from "../helpers/jsonwebtoken.js";
-import { clientUrl, jwtActivationKey } from "../secret/secret.js";
+import { CLIENT_URL, JWT_ACTIVATION_KEY } from "../secret/secret.js";
 import emailWithNodeMailer from "../helpers/email.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 
 // get all user
@@ -128,7 +127,7 @@ export const processRegister = async (req, res, next) => {
         };
 
         // create jwt
-        const token = createJSONWebToken({ name, email, phone, password, address, image }, jwtActivationKey, "10m");
+        const token = createJSONWebToken({ name, email, phone, password, address, image }, JWT_ACTIVATION_KEY, "10m");
 
         // prepare email
         const emailData = {
@@ -136,7 +135,7 @@ export const processRegister = async (req, res, next) => {
             subject: "Account Activation Email",
             html: `
             <h2>Hello ${name}!</h2>
-            <p>Please click here to <a href="${clientUrl}/api/v1/users/activate/${token}" target="_blank"> activate your account </a> </p>
+            <p>Please click here to <a href="${CLIENT_URL}/api/v1/users/activate/${token}" target="_blank"> activate your account </a> </p>
             `
         };
 

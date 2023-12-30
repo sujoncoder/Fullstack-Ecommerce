@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { defaultImagePath } from "../secret/secret.js";
+import { DEFAULT_IMAGE_PATH } from "../secret/secret.js";
+
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -33,7 +34,7 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: defaultImagePath
+        default: DEFAULT_IMAGE_PATH
     },
     address: {
         type: String,

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 
+
 export const createJSONWebToken = (payload, secretKey, expiresIn) => {
     if (typeof payload !== "object" || !payload) {
         throw new Error("payload must be non-empty object")

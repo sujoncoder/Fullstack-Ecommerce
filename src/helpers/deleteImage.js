@@ -1,7 +1,6 @@
 import fs from "fs";
 const fileSys = fs.promises;
 
-
 const deleteImage = async (userImagePath) => {
     try {
         await fileSys.access(userImagePath)

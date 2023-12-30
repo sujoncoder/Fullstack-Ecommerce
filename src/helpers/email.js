@@ -1,32 +1,31 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-dotenv.config()
-import { smtpPassword, smtpUserName } from "../secret/secret.js";
+import { SMTP_PASSWORD, SMTP_USERNAME } from "../secret/secret.js";
+
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
-        user: smtpUserName,
-        pass: smtpPassword,
+        user: SMTP_USERNAME,
+        pass: SMTP_PASSWORD,
     },
 });
+
 
 const emailWithNodeMailer = async (emailData) => {
     try {
         const mailOptions = {
-            from: smtpUserName, // sender address
+            from: SMTP_USERNAME, // sender address
             to: emailData.email, // list of receivers
             subject: emailData.subject, // Subject line
             html: emailData.html, // html body
         }
         const info = await transporter.sendMail(mailOptions);
-        console.log(info.response);
+        console.log(info)
     } catch (error) {
         console.error("Error occured while sending email", error);
         throw error;
     }
 };
-
 export default emailWithNodeMailer;

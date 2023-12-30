@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
+import { DB } from "../secret/secret.js";
 
-const DB = process.env.MONGODB_URI;
 
 const connectDB = async () => {
     try {
@@ -10,5 +10,4 @@ const connectDB = async () => {
         console.log(`Database connection failed. ${error.message}`.bgRed.bold)
     }
 };
-
 export default connectDB;

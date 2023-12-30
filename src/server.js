@@ -1,10 +1,10 @@
 import app from "./app.js";
 import colors from "colors";
 import connectDB from "./config/DB.js";
+import { PORT } from "./secret/secret.js";
 
-const port = process.env.PORT || 8000;
 
-app.listen(port, async () => {
-    console.log(`Server is running on ${port}`.bgWhite.black);
+app.listen(PORT, async () => {
+    console.log(`Server is running on ${PORT}`.bgWhite.black);
     await connectDB();
 });

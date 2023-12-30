@@ -5,12 +5,11 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import xssClean from "xss-clean";
 import rateLimit from "express-rate-limit";
-import dotenv from "dotenv";
 import userRouter from "./routes/userRoute.js";
 import seedRouter from "./routes/seedRoute.js";
 import { errorResponse } from "./middlewares/responseHandler.js";
 import createError from "http-errors";
-dotenv.config();
+
 
 // initialize app
 const app = express();
