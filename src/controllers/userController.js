@@ -119,7 +119,7 @@ export const deleteUser = async (req, res, next) => {
 // process-register
 export const processRegister = async (req, res, next) => {
     try {
-        const { name, email, phone, password, address } = req.body;
+        const { name, email, phone, password, address, image } = req.body;
 
         const userExist = await User.exists({ email });
 
@@ -128,7 +128,7 @@ export const processRegister = async (req, res, next) => {
         };
 
         // create jwt
-        const token = createJSONWebToken({ name, email, phone, password, address }, jwtActivationKey, "10m");
+        const token = createJSONWebToken({ name, email, phone, password, address, image }, jwtActivationKey, "10m");
 
         // prepare email
         const emailData = {
@@ -141,15 +141,16 @@ export const processRegister = async (req, res, next) => {
         };
 
         // send email with nodemailer
-        try {
-            emailWithNodeMailer(emailData);
-        } catch (error) {
-            return res.status(400).send("failed to send verifiation email")
-        };
+        // try {
+        //     emailWithNodeMailer(emailData);
+        // } catch (error) {
+        //     return res.status(400).send("failed to send verifiation email")
+        // };
 
         return successResponse(res, {
             statusCode: 200,
             message: `send ${emailData.email} verifycation link on your email`,
+            userExist,
             payload: {
                 token
             }
@@ -175,6 +176,7 @@ export const activateUserAccount = async (req, res, next) => {
         };
 
         const decoded = jwt.verify(token, jwtActivationKey);
+
         const userExist = await User.exists({ email: decoded.email });
 
         if (userExist) {
